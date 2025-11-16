@@ -1,0 +1,125 @@
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+const (
+	usdToEur = 0.86
+	usdToRub = 81
+	eurToRub = 1 / usdToEur * usdToRub
+)
+
+func main() {
+	initialCurrency := getInitialCurrency()
+	moneyAmountToConvert := getMoneyAmount()
+	targetCurrency := getTargetCurrency(initialCurrency)
+
+	conversionResult := convert(moneyAmountToConvert, initialCurrency, targetCurrency)
+
+	fmt.Printf("Итоговая сумма %v: %.2f\n", targetCurrency, conversionResult)
+}
+
+func getTargetCurrency(pickedCurrency string) string {
+	var available string
+
+	switch pickedCurrency {
+	case "EUR":
+		available = "RUB, USD"
+	case "RUB":
+		available = "EUR, USD"
+	default:
+		available = "EUR, RUB"
+	}
+
+	for {
+		text := fmt.Sprintf("Введите валюту для обмена (%v): ", available)
+		currency, err := getUserInputString(text)
+		if err != nil {
+			continue
+		}
+
+		if currency == pickedCurrency {
+			continue
+		}
+
+		if currency != "EUR" && currency != "RUB" && currency != "USD" {
+			continue
+		}
+
+		return currency
+	}
+}
+
+func getMoneyAmount() float64 {
+	for {
+		moneyAmountString, err := getUserInputString("Введите сумму: ")
+		if err != nil {
+			continue
+		}
+
+		moneyAmount, err := strconv.ParseFloat(moneyAmountString, 64)
+		if err != nil {
+			continue
+		}
+
+		if moneyAmount <= 0 {
+			continue
+		}
+
+		return moneyAmount
+
+	}
+}
+
+func getInitialCurrency() string {
+	for {
+		initialCurrency, err := getUserInputString("Введите валюту для обмена (EUR, RUB, USD): ")
+		if err != nil {
+			continue
+		}
+
+		if initialCurrency != "EUR" && initialCurrency != "RUB" && initialCurrency != "USD" {
+			continue
+		}
+
+		return initialCurrency
+	}
+}
+
+func getUserInputString(text string) (string, error) {
+	var userInput string
+
+	fmt.Print(text)
+	_, err := fmt.Scan(&userInput)
+	if err != nil {
+		fmt.Print("Ошибка ввода данных: ", err)
+		return "", err
+	}
+
+	return userInput, nil
+}
+
+func convert(amount float64, from, to string) float64 {
+	switch from {
+	case "EUR":
+		if to == "RUB" {
+			return amount * eurToRub
+		} else {
+			return amount / usdToEur
+		}
+	case "RUB":
+		if to == "EUR" {
+			return amount / eurToRub
+		} else {
+			return amount / usdToRub
+		}
+	default:
+		if to == "RUB" {
+			return amount * usdToRub
+		} else {
+			return amount * usdToEur
+		}
+	}
+}
