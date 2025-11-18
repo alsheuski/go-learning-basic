@@ -10,6 +10,9 @@ func main() {
 	currencyMap["USDEUR"] = 0.86
 	currencyMap["USDRUB"] = 81
 	currencyMap["EURRUB"] = currencyMap["USDRUB"] / currencyMap["USDEUR"]
+	currencyMap["EURUSD"] = 1 / currencyMap["USDEUR"]
+	currencyMap["RUBEUR"] = 1 / currencyMap["EURRUB"]
+	currencyMap["RUBUSD"] = 1 / currencyMap["USDRUB"]
 
 	initialCurrency := getInitialCurrency()
 	moneyAmountToConvert := getMoneyAmount()
@@ -101,24 +104,5 @@ func getUserInputString(text string) (string, error) {
 }
 
 func convert(amount float64, from, to string, currencyMap map[string]float64) float64 {
-	switch from {
-	case "EUR":
-		if to == "RUB" {
-			return amount * currencyMap["EURRUB"]
-		} else {
-			return amount / currencyMap["USDEUR"]
-		}
-	case "RUB":
-		if to == "EUR" {
-			return amount / currencyMap["EURRUB"]
-		} else {
-			return amount / currencyMap["USDRUB"]
-		}
-	default:
-		if to == "RUB" {
-			return amount * currencyMap["USDRUB"]
-		} else {
-			return amount * currencyMap["USDEUR"]
-		}
-	}
+	return amount * currencyMap[from+to]
 }
