@@ -18,7 +18,7 @@ func main() {
 	moneyAmountToConvert := getMoneyAmount()
 	targetCurrency := getTargetCurrency(initialCurrency)
 
-	conversionResult := convert(moneyAmountToConvert, initialCurrency, targetCurrency, currencyMap)
+	conversionResult := convert(moneyAmountToConvert, initialCurrency, targetCurrency, &currencyMap)
 
 	fmt.Printf("Итоговая сумма %v: %.2f\n", targetCurrency, conversionResult)
 }
@@ -103,6 +103,6 @@ func getUserInputString(text string) (string, error) {
 	return userInput, nil
 }
 
-func convert(amount float64, from, to string, currencyMap map[string]float64) float64 {
-	return amount * currencyMap[from+to]
+func convert(amount float64, from, to string, currencyMap *map[string]float64) float64 {
+	return amount * (*currencyMap)[from+to]
 }
