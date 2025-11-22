@@ -5,18 +5,20 @@ import (
 	"strconv"
 )
 
-const (
-	usdToEur = 0.86
-	usdToRub = 81
-	eurToRub = 1 / usdToEur * usdToRub
-)
-
 func main() {
+	currencyMap := make(map[string]float64, 3)
+	currencyMap["USDEUR"] = 0.86
+	currencyMap["USDRUB"] = 81
+	currencyMap["EURRUB"] = currencyMap["USDRUB"] / currencyMap["USDEUR"]
+	currencyMap["EURUSD"] = 1 / currencyMap["USDEUR"]
+	currencyMap["RUBEUR"] = 1 / currencyMap["EURRUB"]
+	currencyMap["RUBUSD"] = 1 / currencyMap["USDRUB"]
+
 	initialCurrency := getInitialCurrency()
 	moneyAmountToConvert := getMoneyAmount()
 	targetCurrency := getTargetCurrency(initialCurrency)
 
-	conversionResult := convert(moneyAmountToConvert, initialCurrency, targetCurrency)
+	conversionResult := convert(moneyAmountToConvert, initialCurrency, targetCurrency, &currencyMap)
 
 	fmt.Printf("Итоговая сумма %v: %.2f\n", targetCurrency, conversionResult)
 }
@@ -101,25 +103,6 @@ func getUserInputString(text string) (string, error) {
 	return userInput, nil
 }
 
-func convert(amount float64, from, to string) float64 {
-	switch from {
-	case "EUR":
-		if to == "RUB" {
-			return amount * eurToRub
-		} else {
-			return amount / usdToEur
-		}
-	case "RUB":
-		if to == "EUR" {
-			return amount / eurToRub
-		} else {
-			return amount / usdToRub
-		}
-	default:
-		if to == "RUB" {
-			return amount * usdToRub
-		} else {
-			return amount * usdToEur
-		}
-	}
+func convert(amount float64, from, to string, currencyMap *map[string]float64) float64 {
+	return amount * (*currencyMap)[from+to]
 }
