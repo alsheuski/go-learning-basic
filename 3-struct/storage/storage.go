@@ -3,7 +3,6 @@ package storage
 
 import (
 	"encoding/json"
-	"os"
 
 	"purple.learn/3-struct/bins"
 
@@ -24,16 +23,16 @@ func SaveToJSONFile(bin *bins.BinList) error {
 	return nil
 }
 
-func ReadJSONFile(fileName string) ([]byte, error) {
-	data, err := os.ReadFile(fileName)
+func ReadJSONFile(fileName string) (bins.BinList, error) {
+	data, err := file.ReadFile(fileName)
 	if err != nil {
-		return nil, err
+		return bins.BinList{}, err
 	}
 
-	var result []byte
+	var result bins.BinList
 	err = json.Unmarshal(data, &result)
 	if err != nil {
-		return nil, err
+		return bins.BinList{}, err
 	}
 	return result, nil
 }
