@@ -9,6 +9,11 @@ import (
 	"purple.learn/3-struct/file"
 )
 
+type Storage interface {
+	SaveToJSONFile(bins.BinList) error
+	ReadJSONFile(string) (bins.BinList, error)
+}
+
 func SaveToJSONFile(bin *bins.BinList) error {
 	data, err := json.Marshal(bin)
 	if err != nil {
