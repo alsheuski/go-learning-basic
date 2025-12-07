@@ -14,7 +14,13 @@ type Storage interface {
 	ReadJSONFile(string) (bins.BinList, error)
 }
 
-func SaveToJSONFile(bin *bins.BinList) error {
+type JSONStorage struct{}
+
+func NewJSONStorage() Storage {
+	return &JSONStorage{}
+}
+
+func (storage *JSONStorage) SaveToJSONFile(bin bins.BinList) error {
 	data, err := json.Marshal(bin)
 	if err != nil {
 		return err
@@ -28,7 +34,7 @@ func SaveToJSONFile(bin *bins.BinList) error {
 	return nil
 }
 
-func ReadJSONFile(fileName string) (bins.BinList, error) {
+func (storage *JSONStorage) ReadJSONFile(fileName string) (bins.BinList, error) {
 	data, err := file.ReadFile(fileName)
 	if err != nil {
 		return bins.BinList{}, err
