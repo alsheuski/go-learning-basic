@@ -9,6 +9,12 @@ import (
 	"strings"
 )
 
+var funcList = map[string]func([]float64) float64{
+	"AVG": calcAvg,
+	"SUM": calcSum,
+	"MED": calcMedian,
+}
+
 func main() {
 	operation := getUserOperation()
 	numbers := getUserDigits()
@@ -18,15 +24,18 @@ func main() {
 }
 
 func calculate(operation string, numbers []float64) float64 {
-	switch operation {
-	case "AVG":
-		sum := calcSum(numbers)
-		return sum / float64(len(numbers))
-	case "SUM":
-		return calcSum(numbers)
-	default:
-		return calcMedian(numbers)
+	fn, ok := funcList[operation]
+	if !ok {
+		fmt.Println("Unknown openration: ", operation)
+		os.Exit(1)
 	}
+
+	return fn(numbers)
+}
+
+func calcAvg(data []float64) float64 {
+	sum := calcSum(data)
+	return sum / float64(len(data))
 }
 
 func calcMedian(data []float64) float64 {
